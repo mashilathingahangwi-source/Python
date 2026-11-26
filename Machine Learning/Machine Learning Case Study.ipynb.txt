@@ -1,0 +1,1107 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "application/vnd.databricks.v1+cell": {
+     "cellMetadata": {},
+     "inputWidgets": {},
+     "nuid": "bf8d61e6-2986-483c-b0b1-4b0c0836b29b",
+     "showTitle": false,
+     "tableResultSettingsMap": {},
+     "title": ""
+    }
+   },
+   "source": [
+    "# Explore \"titanic3.csv\"\n",
+    "\n",
+    "Generated for a selected file in Catalog Explorer. This notebook shows how to do the following: - viewing file metadata - parsing documents with ai_parse_document - analyzing images with ai_query"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 0,
+   "metadata": {
+    "application/vnd.databricks.v1+cell": {
+     "cellMetadata": {
+      "byteLimit": 2048000,
+      "rowLimit": 10000
+     },
+     "finishTime": 1795696569740,
+     "inputWidgets": {},
+     "nuid": "567c4c6c-b03f-4e4b-8de5-9058b0645bdb",
+     "showTitle": true,
+     "startTime": 1795696569597,
+     "submitTime": 1795696569552,
+     "tableResultSettingsMap": {},
+     "title": "import pandas"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "import pandas as pd"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 0,
+   "metadata": {
+    "application/vnd.databricks.v1+cell": {
+     "cellMetadata": {
+      "byteLimit": 2048000,
+      "rowLimit": 10000
+     },
+     "finishTime": 1795696575966,
+     "inputWidgets": {},
+     "nuid": "ebd1e923-aef9-4207-b62d-6ebbb1e4eb3b",
+     "showTitle": true,
+     "startTime": 1795696570621,
+     "submitTime": 1795696570580,
+     "tableResultSettingsMap": {},
+     "title": "Data Loading"
+    }
+   },
+   "outputs": [
+    {
+     "output_type": "execute_result",
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>pclass</th>\n",
+       "      <th>survived</th>\n",
+       "      <th>name</th>\n",
+       "      <th>sex</th>\n",
+       "      <th>age</th>\n",
+       "      <th>sibsp</th>\n",
+       "      <th>parch</th>\n",
+       "      <th>ticket</th>\n",
+       "      <th>fare</th>\n",
+       "      <th>cabin</th>\n",
+       "      <th>embarked</th>\n",
+       "      <th>boat</th>\n",
+       "      <th>body</th>\n",
+       "      <th>home.dest</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>1.0</td>\n",
+       "      <td>1.0</td>\n",
+       "      <td>Allen, Miss. Elisabeth Walton</td>\n",
+       "      <td>female</td>\n",
+       "      <td>29.0000</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>24160</td>\n",
+       "      <td>211.3375</td>\n",
+       "      <td>B5</td>\n",
+       "      <td>S</td>\n",
+       "      <td>2</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>St Louis, MO</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>1.0</td>\n",
+       "      <td>1.0</td>\n",
+       "      <td>Allison, Master. Hudson Trevor</td>\n",
+       "      <td>male</td>\n",
+       "      <td>0.9167</td>\n",
+       "      <td>1.0</td>\n",
+       "      <td>2.0</td>\n",
+       "      <td>113781</td>\n",
+       "      <td>151.5500</td>\n",
+       "      <td>C22 C26</td>\n",
+       "      <td>S</td>\n",
+       "      <td>11</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>Montreal, PQ / Chesterville, ON</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>1.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>Allison, Miss. Helen Loraine</td>\n",
+       "      <td>female</td>\n",
+       "      <td>2.0000</td>\n",
+       "      <td>1.0</td>\n",
+       "      <td>2.0</td>\n",
+       "      <td>113781</td>\n",
+       "      <td>151.5500</td>\n",
+       "      <td>C22 C26</td>\n",
+       "      <td>S</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>Montreal, PQ / Chesterville, ON</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>1.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>Allison, Mr. Hudson Joshua Creighton</td>\n",
+       "      <td>male</td>\n",
+       "      <td>30.0000</td>\n",
+       "      <td>1.0</td>\n",
+       "      <td>2.0</td>\n",
+       "      <td>113781</td>\n",
+       "      <td>151.5500</td>\n",
+       "      <td>C22 C26</td>\n",
+       "      <td>S</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>135.0</td>\n",
+       "      <td>Montreal, PQ / Chesterville, ON</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>1.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>Allison, Mrs. Hudson J C (Bessie Waldo Daniels)</td>\n",
+       "      <td>female</td>\n",
+       "      <td>25.0000</td>\n",
+       "      <td>1.0</td>\n",
+       "      <td>2.0</td>\n",
+       "      <td>113781</td>\n",
+       "      <td>151.5500</td>\n",
+       "      <td>C22 C26</td>\n",
+       "      <td>S</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>Montreal, PQ / Chesterville, ON</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "   pclass  survived  ...   body                        home.dest\n",
+       "0     1.0       1.0  ...    NaN                     St Louis, MO\n",
+       "1     1.0       1.0  ...    NaN  Montreal, PQ / Chesterville, ON\n",
+       "2     1.0       0.0  ...    NaN  Montreal, PQ / Chesterville, ON\n",
+       "3     1.0       0.0  ...  135.0  Montreal, PQ / Chesterville, ON\n",
+       "4     1.0       0.0  ...    NaN  Montreal, PQ / Chesterville, ON\n",
+       "\n",
+       "[5 rows x 14 columns]"
+      ]
+     },
+     "execution_count": 10,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "import pandas as pd\n",
+    "df = pd.read_csv(\"/Volumes/workspace/default/titanic/titanic3.csv\")\n",
+    "\n",
+    "df.head()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 0,
+   "metadata": {
+    "application/vnd.databricks.v1+cell": {
+     "cellMetadata": {
+      "byteLimit": 2048000,
+      "rowLimit": 10000
+     },
+     "finishTime": 1795696576067,
+     "inputWidgets": {},
+     "nuid": "37998351-74a0-47b3-a699-f19eee13a7b9",
+     "showTitle": true,
+     "startTime": 1795696576002,
+     "submitTime": 1795696575001,
+     "tableResultSettingsMap": {},
+     "title": "How many rows"
+    }
+   },
+   "outputs": [
+    {
+     "output_type": "stream",
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "(1310, 14)\n"
+     ]
+    }
+   ],
+   "source": [
+    "print(df.shape)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 0,
+   "metadata": {
+    "application/vnd.databricks.v1+cell": {
+     "cellMetadata": {
+      "byteLimit": 2048000,
+      "rowLimit": 10000
+     },
+     "finishTime": 1795696576667,
+     "inputWidgets": {},
+     "nuid": "a9d78d98-baee-436d-9692-b87b9417815f",
+     "showTitle": true,
+     "startTime": 1795696576547,
+     "submitTime": 1795696576509,
+     "tableResultSettingsMap": {},
+     "title": "Checking columns"
+    }
+   },
+   "outputs": [
+    {
+     "output_type": "stream",
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "pclass       float64\nsurvived     float64\nname          object\nsex           object\nage          float64\nsibsp        float64\nparch        float64\nticket        object\nfare         float64\ncabin         object\nembarked      object\nboat          object\nbody         float64\nhome.dest     object\ndtype: object\n"
+     ]
+    }
+   ],
+   "source": [
+    "print(df.dtypes)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 0,
+   "metadata": {
+    "application/vnd.databricks.v1+cell": {
+     "cellMetadata": {
+      "byteLimit": 2048000,
+      "rowLimit": 10000
+     },
+     "finishTime": 1795696580372,
+     "inputWidgets": {},
+     "nuid": "d72d9e80-ed76-4a56-9d8b-10920d82a1ec",
+     "showTitle": true,
+     "startTime": 1795696580266,
+     "submitTime": 1795696580227,
+     "tableResultSettingsMap": {},
+     "title": "Checking Null"
+    }
+   },
+   "outputs": [
+    {
+     "output_type": "stream",
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "pclass          1\nsurvived        1\nname            1\nsex             1\nage           264\nsibsp           1\nparch           1\nticket          1\nfare            2\ncabin        1015\nembarked        3\nboat          824\nbody         1189\nhome.dest     565\ndtype: int64\n"
+     ]
+    }
+   ],
+   "source": [
+    "print(df.isnull().sum())"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 0,
+   "metadata": {
+    "application/vnd.databricks.v1+cell": {
+     "cellMetadata": {
+      "byteLimit": 2048000,
+      "rowLimit": 10000
+     },
+     "finishTime": 1795696583074,
+     "inputWidgets": {},
+     "nuid": "8c03cf9b-a8ff-4047-b749-b5419b683a84",
+     "showTitle": true,
+     "startTime": 1795696582939,
+     "submitTime": 1795696582901,
+     "tableResultSettingsMap": {},
+     "title": "Survived is Null"
+    }
+   },
+   "outputs": [
+    {
+     "output_type": "execute_result",
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>pclass</th>\n",
+       "      <th>survived</th>\n",
+       "      <th>name</th>\n",
+       "      <th>sex</th>\n",
+       "      <th>age</th>\n",
+       "      <th>sibsp</th>\n",
+       "      <th>parch</th>\n",
+       "      <th>ticket</th>\n",
+       "      <th>fare</th>\n",
+       "      <th>cabin</th>\n",
+       "      <th>embarked</th>\n",
+       "      <th>boat</th>\n",
+       "      <th>body</th>\n",
+       "      <th>home.dest</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>1309</th>\n",
+       "      <td>NaN</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>NaN</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "      pclass  survived name  sex  age  ...  cabin  embarked boat  body home.dest\n",
+       "1309     NaN       NaN  NaN  NaN  NaN  ...    NaN       NaN  NaN   NaN       NaN\n",
+       "\n",
+       "[1 rows x 14 columns]"
+      ]
+     },
+     "execution_count": 14,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "df[df['survived'].isnull()]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 0,
+   "metadata": {
+    "application/vnd.databricks.v1+cell": {
+     "cellMetadata": {
+      "byteLimit": 2048000,
+      "rowLimit": 10000
+     },
+     "finishTime": 1795696586177,
+     "inputWidgets": {},
+     "nuid": "1ca8be9e-3828-40af-8aff-8a199bafc3be",
+     "showTitle": true,
+     "startTime": 1795696586045,
+     "submitTime": 1795696586007,
+     "tableResultSettingsMap": {},
+     "title": "Removing empty rows"
+    }
+   },
+   "outputs": [
+    {
+     "output_type": "stream",
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "(1309, 14)\n"
+     ]
+    }
+   ],
+   "source": [
+    "df = df.dropna(how='all')\n",
+    "\n",
+    "print(df.shape)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 0,
+   "metadata": {
+    "application/vnd.databricks.v1+cell": {
+     "cellMetadata": {
+      "byteLimit": 2048000,
+      "rowLimit": 10000
+     },
+     "finishTime": 1795696588579,
+     "inputWidgets": {},
+     "nuid": "d28ceec3-36a2-468e-bd14-f2e8201fcfd9",
+     "showTitle": true,
+     "startTime": 1795696588479,
+     "submitTime": 1795696588443,
+     "tableResultSettingsMap": {},
+     "title": "Recheck missing values"
+    }
+   },
+   "outputs": [
+    {
+     "output_type": "execute_result",
+     "data": {
+      "text/plain": [
+       "pclass          0\n",
+       "survived        0\n",
+       "name            0\n",
+       "sex             0\n",
+       "age           263\n",
+       "sibsp           0\n",
+       "parch           0\n",
+       "ticket          0\n",
+       "fare            1\n",
+       "cabin        1014\n",
+       "embarked        2\n",
+       "boat          823\n",
+       "body         1188\n",
+       "home.dest     564\n",
+       "dtype: int64"
+      ]
+     },
+     "execution_count": 16,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "df.isnull().sum()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 0,
+   "metadata": {
+    "application/vnd.databricks.v1+cell": {
+     "cellMetadata": {
+      "byteLimit": 2048000,
+      "rowLimit": 10000
+     },
+     "finishTime": 1795696607298,
+     "inputWidgets": {},
+     "nuid": "64d3d351-e8dd-4fe0-88c0-81cc01f14a9b",
+     "showTitle": true,
+     "startTime": 1795696607197,
+     "submitTime": 1795696607160,
+     "tableResultSettingsMap": {},
+     "title": "Missing age"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "df['age'] = df['age'].fillna(df['age'].median())"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 0,
+   "metadata": {
+    "application/vnd.databricks.v1+cell": {
+     "cellMetadata": {
+      "byteLimit": 2048000,
+      "rowLimit": 10000
+     },
+     "finishTime": 1795696603795,
+     "inputWidgets": {},
+     "nuid": "b147d53c-b8f6-49ad-b1db-7305b6d2d819",
+     "showTitle": true,
+     "startTime": 1795696603710,
+     "submitTime": 1795696603677,
+     "tableResultSettingsMap": {},
+     "title": "Replacing missing age"
+    }
+   },
+   "outputs": [
+    {
+     "output_type": "stream",
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "/home/spark-89fd49a8-835c-4551-aa98-4f/.ipykernel/9640/command-4920574774503383-2790788646:1: FutureWarning: A value is trying to be set on a copy of a DataFrame or Series through chained assignment using an inplace method.\nThe behavior will change in pandas 3.0. This inplace method will never work because the intermediate object on which we are setting values always behaves as a copy.\n\nFor example, when doing 'df[col].method(value, inplace=True)', try using 'df.method({col: value}, inplace=True)' or df[col] = df[col].method(value) instead, to perform the operation inplace on the original object.\n\n\n  df['age'].fillna(df['age'].median(),inplace=True)\n"
+     ]
+    }
+   ],
+   "source": [
+    "df['age'].fillna(df['age'].median(),inplace=True)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 0,
+   "metadata": {
+    "application/vnd.databricks.v1+cell": {
+     "cellMetadata": {
+      "byteLimit": 2048000,
+      "rowLimit": 10000
+     },
+     "finishTime": 1795696620710,
+     "inputWidgets": {},
+     "nuid": "b3e63cf0-bfd1-4273-9c9a-6ad82d3369f5",
+     "showTitle": false,
+     "startTime": 1795696620626,
+     "submitTime": 1795696620589,
+     "tableResultSettingsMap": {},
+     "title": ""
+    }
+   },
+   "outputs": [
+    {
+     "output_type": "execute_result",
+     "data": {
+      "text/plain": [
+       "np.float64(28.0)"
+      ]
+     },
+     "execution_count": 25,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "df['age'].median()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 0,
+   "metadata": {
+    "application/vnd.databricks.v1+cell": {
+     "cellMetadata": {
+      "byteLimit": 2048000,
+      "rowLimit": 10000
+     },
+     "finishTime": 1795696621524,
+     "inputWidgets": {},
+     "nuid": "7ddce7e7-337c-4862-8137-6e16a997e0e9",
+     "showTitle": true,
+     "startTime": 1795696621447,
+     "submitTime": 1795696621396,
+     "tableResultSettingsMap": {},
+     "title": "Replacing missing fare values"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "df['fare'] = df['fare'].fillna(df['fare'].median())"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 0,
+   "metadata": {
+    "application/vnd.databricks.v1+cell": {
+     "cellMetadata": {
+      "byteLimit": 2048000,
+      "rowLimit": 10000
+     },
+     "finishTime": 1795696625020,
+     "inputWidgets": {},
+     "nuid": "26e2177e-f402-46f4-8dfe-1f3781f59666",
+     "showTitle": true,
+     "startTime": 1795696624911,
+     "submitTime": 1795696624874,
+     "tableResultSettingsMap": {},
+     "title": "Handling missing fare and Embarked values"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "df['fare'] = df['fare'].fillna(df['fare'].median())\n",
+    "\n",
+    "df['embarked'] = df ['embarked'].fillna(df['embarked'].mode()[0])"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 0,
+   "metadata": {
+    "application/vnd.databricks.v1+cell": {
+     "cellMetadata": {
+      "byteLimit": 2048000,
+      "rowLimit": 10000
+     },
+     "finishTime": 1795696626021,
+     "inputWidgets": {},
+     "nuid": "cfae43da-1af2-4f5b-a7ed-8703f752b37d",
+     "showTitle": true,
+     "startTime": 1795696625968,
+     "submitTime": 1795696625929,
+     "tableResultSettingsMap": {},
+     "title": "Rechecking  missing values again"
+    }
+   },
+   "outputs": [
+    {
+     "output_type": "stream",
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "pclass          0\nsurvived        0\nname            0\nsex             0\nage             0\nsibsp           0\nparch           0\nticket          0\nfare            0\ncabin        1014\nembarked        0\nboat          823\nbody         1188\nhome.dest     564\ndtype: int64\n"
+     ]
+    }
+   ],
+   "source": [
+    "print(df.isnull().sum())"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 0,
+   "metadata": {
+    "application/vnd.databricks.v1+cell": {
+     "cellMetadata": {
+      "byteLimit": 2048000,
+      "rowLimit": 10000
+     },
+     "finishTime": 1795696628024,
+     "inputWidgets": {},
+     "nuid": "43041fb8-fe5d-4505-96aa-0fae50d36187",
+     "showTitle": true,
+     "startTime": 1795696627918,
+     "submitTime": 1795696627886,
+     "tableResultSettingsMap": {},
+     "title": "Removing columns with too many excessive missing values"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "df = df.drop(columns=['cabin', 'boat','body'])"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 0,
+   "metadata": {
+    "application/vnd.databricks.v1+cell": {
+     "cellMetadata": {
+      "byteLimit": 2048000,
+      "rowLimit": 10000
+     },
+     "finishTime": 1795696630426,
+     "inputWidgets": {},
+     "nuid": "f67f1816-4e4f-4640-8cf0-89a8f78c5791",
+     "showTitle": true,
+     "startTime": 1795696630342,
+     "submitTime": 1795696630301,
+     "tableResultSettingsMap": {},
+     "title": "Checking remaining dataset"
+    }
+   },
+   "outputs": [
+    {
+     "output_type": "stream",
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "(1309, 11)\n"
+     ]
+    }
+   ],
+   "source": [
+    "print(df.shape)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 0,
+   "metadata": {
+    "application/vnd.databricks.v1+cell": {
+     "cellMetadata": {
+      "byteLimit": 2048000,
+      "rowLimit": 10000
+     },
+     "finishTime": 1795696631242,
+     "inputWidgets": {},
+     "nuid": "c07e816f-6894-4816-b2a4-1d7822aa1e79",
+     "showTitle": true,
+     "startTime": 1795696631163,
+     "submitTime": 1795696631127,
+     "tableResultSettingsMap": {},
+     "title": "Checking missing home"
+    }
+   },
+   "outputs": [
+    {
+     "output_type": "stream",
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "564\n"
+     ]
+    }
+   ],
+   "source": [
+    "print(df['home.dest'].isnull().sum())"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 0,
+   "metadata": {
+    "application/vnd.databricks.v1+cell": {
+     "cellMetadata": {
+      "byteLimit": 2048000,
+      "rowLimit": 10000
+     },
+     "finishTime": 1795696632829,
+     "inputWidgets": {},
+     "nuid": "1ae56aea-5336-4fc5-95a8-b151e4dadad7",
+     "showTitle": true,
+     "startTime": 1795696632721,
+     "submitTime": 1795696632687,
+     "tableResultSettingsMap": {},
+     "title": "Verifying"
+    }
+   },
+   "outputs": [
+    {
+     "output_type": "stream",
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "564\n"
+     ]
+    }
+   ],
+   "source": [
+    "print(df.isnull().sum().sum())"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 0,
+   "metadata": {
+    "application/vnd.databricks.v1+cell": {
+     "cellMetadata": {
+      "byteLimit": 2048000,
+      "rowLimit": 10000
+     },
+     "finishTime": 1795696635632,
+     "inputWidgets": {},
+     "nuid": "35bb675d-0fef-4bb7-8102-9f91dbd040f0",
+     "showTitle": true,
+     "startTime": 1795696635497,
+     "submitTime": 1795696635457,
+     "tableResultSettingsMap": {},
+     "title": "removing home.dest"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "df = df.drop(columns=['home.dest'])"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 0,
+   "metadata": {
+    "application/vnd.databricks.v1+cell": {
+     "cellMetadata": {
+      "byteLimit": 2048000,
+      "rowLimit": 10000
+     },
+     "finishTime": 1795696636933,
+     "inputWidgets": {},
+     "nuid": "2f344c46-2ee1-49ae-b42e-9ac171c4e617",
+     "showTitle": true,
+     "startTime": 1795696636828,
+     "submitTime": 1795696636793,
+     "tableResultSettingsMap": {},
+     "title": "Rechecking"
+    }
+   },
+   "outputs": [
+    {
+     "output_type": "stream",
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "0\n"
+     ]
+    }
+   ],
+   "source": [
+    "print(df.isnull().sum().sum())"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 0,
+   "metadata": {
+    "application/vnd.databricks.v1+cell": {
+     "cellMetadata": {
+      "byteLimit": 2048000,
+      "rowLimit": 10000
+     },
+     "finishTime": 1795696639635,
+     "inputWidgets": {},
+     "nuid": "4d546a8c-67f4-4426-bf6b-4a00fdd1b626",
+     "showTitle": true,
+     "startTime": 1795696639499,
+     "submitTime": 1795696639465,
+     "tableResultSettingsMap": {},
+     "title": "Separating feature (X) and target (Y)"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "X = df.drop(columns=['survived','name','ticket'])\n",
+    "y = df['survived']"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 0,
+   "metadata": {
+    "application/vnd.databricks.v1+cell": {
+     "cellMetadata": {
+      "byteLimit": 2048000,
+      "rowLimit": 10000
+     },
+     "finishTime": 1795696641036,
+     "inputWidgets": {},
+     "nuid": "2cfdce31-6da6-4b22-8466-d253c7da41d8",
+     "showTitle": true,
+     "startTime": 1795696640933,
+     "submitTime": 1795696640890,
+     "tableResultSettingsMap": {},
+     "title": "Verifying"
+    }
+   },
+   "outputs": [
+    {
+     "output_type": "stream",
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "(1309, 7)\n(1309,)\n"
+     ]
+    }
+   ],
+   "source": [
+    "print(X.shape)\n",
+    "print(y.shape)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 0,
+   "metadata": {
+    "application/vnd.databricks.v1+cell": {
+     "cellMetadata": {
+      "byteLimit": 2048000,
+      "rowLimit": 10000
+     },
+     "finishTime": 1795696643640,
+     "inputWidgets": {},
+     "nuid": "800e98c1-341e-4b28-bb4e-68d08df496a3",
+     "showTitle": true,
+     "startTime": 1795696643496,
+     "submitTime": 1795696643460,
+     "tableResultSettingsMap": {},
+     "title": "Test split"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "from sklearn.model_selection import train_test_split\n",
+    "X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 0,
+   "metadata": {
+    "application/vnd.databricks.v1+cell": {
+     "cellMetadata": {
+      "byteLimit": 2048000,
+      "rowLimit": 10000
+     },
+     "finishTime": 1795696646544,
+     "inputWidgets": {},
+     "nuid": "84db1bf1-8562-494a-bb53-10f3c3768d37",
+     "showTitle": true,
+     "startTime": 1795696646474,
+     "submitTime": 1795696646436,
+     "tableResultSettingsMap": {},
+     "title": "Encoding"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "X_train = pd.get_dummies(X_train)\n",
+    "X_test = pd.get_dummies(X_test)\n",
+    "\n",
+    "X_test = X_test.reindex(columns=X_train.columns, fill_value=0)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 0,
+   "metadata": {
+    "application/vnd.databricks.v1+cell": {
+     "cellMetadata": {
+      "byteLimit": 2048000,
+      "rowLimit": 10000
+     },
+     "finishTime": 1795696650348,
+     "inputWidgets": {},
+     "nuid": "8f4dbf09-3576-4219-b3ba-669b2225edbd",
+     "showTitle": true,
+     "startTime": 1795696650245,
+     "submitTime": 1795696650200,
+     "tableResultSettingsMap": {},
+     "title": "Verifying"
+    }
+   },
+   "outputs": [
+    {
+     "output_type": "stream",
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "(1047, 10)\n(262, 10)\n"
+     ]
+    }
+   ],
+   "source": [
+    "print(X_train.shape)\n",
+    "print(X_test.shape)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 0,
+   "metadata": {
+    "application/vnd.databricks.v1+cell": {
+     "cellMetadata": {
+      "byteLimit": 2048000,
+      "rowLimit": 10000
+     },
+     "finishTime": 1795696653950,
+     "inputWidgets": {},
+     "nuid": "b31aca57-5e08-4338-abc1-995bd5719f9d",
+     "showTitle": true,
+     "startTime": 1795696653894,
+     "submitTime": 1795696653855,
+     "tableResultSettingsMap": {},
+     "title": "Scaling"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "from sklearn.preprocessing import StandardScaler\n",
+    "scaler = StandardScaler()\n",
+    "X_train[['age', 'fare']] = scaler.fit_transform(X_train[['age', 'fare']])\n",
+    "X_test[['age','fare']] = scaler.transform(X_test[['age', 'fare']])"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 0,
+   "metadata": {
+    "application/vnd.databricks.v1+cell": {
+     "cellMetadata": {},
+     "inputWidgets": {},
+     "nuid": "3ff87228-69f7-4e87-b78c-e90f8e0cfff0",
+     "showTitle": true,
+     "tableResultSettingsMap": {},
+     "title": "Feature scaling"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "\n",
+    "StandardScaler was used to scale the Age and Fare columns. This helps bring numerical features onto a similar scale so that features with larger values do not dominate the model. I fitted the scaler on the training data and applied the same transformation to the testing data to prevent data leakage."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 0,
+   "metadata": {
+    "application/vnd.databricks.v1+cell": {
+     "cellMetadata": {
+      "byteLimit": 2048000,
+      "rowLimit": 10000
+     },
+     "finishTime": 1795697136560,
+     "inputWidgets": {},
+     "nuid": "bf0a331a-d1fc-4551-80f1-e03d5b8ba929",
+     "showTitle": true,
+     "startTime": 1795697136434,
+     "submitTime": 1795697136370,
+     "tableResultSettingsMap": {},
+     "title": "Final Check"
+    }
+   },
+   "outputs": [
+    {
+     "output_type": "stream",
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Training data: (1047, 10)\nTesting data: (262, 10)\nTraining target: (1047,)\nTesting target: (262,)\n"
+     ]
+    }
+   ],
+   "source": [
+    "\n",
+    "print(\"Training data:\", X_train.shape)\n",
+    "print(\"Testing data:\", X_test.shape)\n",
+    "print(\"Training target:\", y_train.shape)\n",
+    "print(\"Testing target:\", y_test.shape)"
+   ]
+  }
+ ],
+ "metadata": {
+  "application/vnd.databricks.v1+notebook": {
+   "computePreferences": null,
+   "dashboards": [],
+   "environmentMetadata": {
+    "environment_version": "4"
+   },
+   "inputWidgetPreferences": null,
+   "language": "python",
+   "notebookMetadata": {
+    "pythonIndentUnit": 4
+   },
+   "notebookName": "Machine Learning Case Study",
+   "widgets": {}
+  },
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "name": "python"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 0
+}
